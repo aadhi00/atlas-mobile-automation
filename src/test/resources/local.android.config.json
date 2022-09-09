@@ -1,0 +1,13 @@
+{
+  "server": "0.0.0.0",
+  "port": "4723",
+  "capabilities": {
+    "appium:automationName": "UiAutomator2",
+    "appium:platformName": "android",
+    "appium:platformVersion": "12.0",
+    "appium:deviceName": "samsung m31",
+    "appium:udid": "RZ8N715TCEF",
+    "appium:app": "C:\\Users\\aadhi\\Downloads\\android-build\\app-release.apk",
+    "appium:skipServerInstallation": true
+  }
+}

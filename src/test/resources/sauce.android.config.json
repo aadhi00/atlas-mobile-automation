@@ -1,0 +1,17 @@
+{
+  "server": "ondemand.eu-central-1.saucelabs.com",
+  "username": "aadhithyan.nagarajan",
+  "access_key": "c18dc3c6-eaae-4828-aba1-170025307b7d",
+  "capabilities": {
+    "project": "First TestNg Android Project",
+    "build": "saucelab-build-1",
+    "name": "first_test",
+    "app": "storage:filename=54cbcb93-b283-4bf1-acea-9cb1d1830940.apk"
+  },
+  "environments": {
+    "env1": {
+      "device": "Google Pixel 4a (5G) GoogleAPI Emulator",
+      "os_version": "12.0"
+    }
+  }
+}
