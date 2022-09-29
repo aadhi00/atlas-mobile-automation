@@ -1,19 +1,14 @@
-package com.atlasmobile.steps;
+package com.atlasmobile.utils;
 
-import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.ios.IOSDriver;
-import io.cucumber.testng.AbstractTestNGCucumberTests;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import net.thucydides.core.webdriver.DriverSource;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Optional;
-import org.testng.annotations.Parameters;
-import org.testng.asserts.SoftAssert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileReader;
@@ -22,37 +17,29 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
-/**
- * @author aadhithyan.nagarajan
- */
-public abstract class BaseTest {
+public class MobileDriver implements DriverSource {
 
+    private static final Logger log = LoggerFactory.getLogger(MobileDriver.class);
     public static final String GLOBAL_TEST_RESOURCES_FOLDER = System.getProperty("user.dir") + File.separator + "src" + File.separator + "test" + File.separator + "resources" + File.separator;
 
-    protected static AppiumDriver mDriver;
+    public static final String EXTENT_REPORT_FOLDER = System.getProperty("user.dir") + File.separator + "target" + File.separator + "extent-report" + File.separator;
 
-    protected SoftAssert softAssert;
-
-    private static final Logger log = LogManager.getLogger();
+    protected WebDriver mDriver;
 
     private Properties properties;
-
-    @Parameters({"configuration", "environment"})
-    @BeforeMethod
-    public void setUp(@Optional("config") String configuration, @Optional("environment") String environment) {
+    @Override
+    public WebDriver newDriver() {
         properties = new Properties();
         JSONParser parser = new JSONParser();
         DesiredCapabilities capabilities = new DesiredCapabilities();
         try {
             String configFile;
+            String configuration="config";
             if (configuration.equals("config")) {
                 properties.load(new FileReader(new File(GLOBAL_TEST_RESOURCES_FOLDER + File.separator + "environment.properties")));
                 configFile = properties.getProperty("config");
             } else {
                 configFile = configuration;
-            }
-            if(environment.equalsIgnoreCase("environment")){
-                environment = "env1";
             }
             JSONObject config = (JSONObject) parser.parse(new FileReader(GLOBAL_TEST_RESOURCES_FOLDER + configFile + ".config.json"));
             JSONObject envs = (JSONObject) config.get("environments");
@@ -77,8 +64,8 @@ public abstract class BaseTest {
                 } else {
                     mDriver = new IOSDriver(url, capabilities);
                 }
-            } else if (configType.equalsIgnoreCase("bs") || configType.equalsIgnoreCase("sauce")) {
-                Map<String, String> envCapabilities = (Map<String, String>) envs.get(environment);
+            } else if (configType.equalsIgnoreCase("sauce")) {
+                Map<String, String> envCapabilities = (Map<String, String>) envs.get("env1");
                 Iterator it = envCapabilities.entrySet().iterator();
                 while (it.hasNext()) {
                     Map.Entry pair = (Map.Entry) it.next();
@@ -93,17 +80,17 @@ public abstract class BaseTest {
                     }
                 }
 
-                String username = System.getenv("BROWSERSTACK_USERNAME");
+                String username = System.getenv("SAUCELABS_USERNAME");
                 if (username == null) {
                     username = (String) config.get("username");
                 }
 
-                String accessKey = System.getenv("BROWSERSTACK_ACCESS_KEY");
+                String accessKey = System.getenv("SAUCELABS_ACCESS_KEY");
                 if (accessKey == null) {
                     accessKey = (String) config.get("access_key");
                 }
 
-                String app = System.getenv("BROWSERSTACK_APP_ID");
+                String app = System.getenv("SAUCELABS_APP_ID");
                 if (app != null && !app.isEmpty()) {
                     capabilities.setCapability("app", app);
                 }
@@ -116,26 +103,15 @@ public abstract class BaseTest {
             } else {
                 throw new Exception("invalid config type in environment properties");
             }
-            setmDriver(mDriver);
+            return mDriver;
         } catch (Exception e) {
-            log.fatal("unable to initialize mobile driver " + e);
+            log.error("unable to initialize mobile driver " + e);
         }
+        return null;
     }
 
-   @AfterMethod
-    public void tearDown() {
-        if (mDriver != null) {
-            mDriver.quit();
-           log.info("closing the app");
-        }
+    @Override
+    public boolean takesScreenshots() {
+        return true;
     }
-
-    public AppiumDriver getmDriver() {
-        return this.mDriver;
-    }
-
-    public void setmDriver(AppiumDriver mDriver) {
-        this.mDriver = mDriver;
-    }
-
 }

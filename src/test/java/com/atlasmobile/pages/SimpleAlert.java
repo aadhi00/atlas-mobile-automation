@@ -4,6 +4,7 @@ import io.appium.java_client.AppiumBy;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import io.appium.java_client.pagefactory.iOSXCUITFindBy;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.List;
 
 public class SimpleAlert extends BasePage{
 
-    public SimpleAlert(AppiumDriver mDriver) {
+    public SimpleAlert(WebDriver mDriver) {
         super(mDriver);
         waitForElement(new AppiumBy.ByAndroidUIAutomator("text(\"Your credentials were not recognized\")"));
     }

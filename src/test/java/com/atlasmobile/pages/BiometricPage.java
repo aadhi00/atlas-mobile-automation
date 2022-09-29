@@ -2,11 +2,12 @@ package com.atlasmobile.pages;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 public class BiometricPage extends BasePage {
 
-    public BiometricPage(AppiumDriver mDriver) {
+    public BiometricPage(WebDriver mDriver) {
         super(mDriver);
     }
 

@@ -8,6 +8,8 @@ import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 import io.appium.java_client.touch.TapOptions;
 import io.appium.java_client.touch.offset.ElementOption;
+import net.serenitybdd.core.pages.PageObject;
+import net.thucydides.core.annotations.Managed;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Pause;
 import org.openqa.selenium.interactions.PointerInput;
@@ -23,9 +25,9 @@ import java.util.List;
 /**
  * @author aadhithyan.nagarajan
  */
-public class BasePage {
+public class BasePage extends MobilePageObject {
 
-    protected AppiumDriver mDriver;
+    protected WebDriver mDriver;
 
     protected List<Boolean> result;
 
@@ -37,12 +39,13 @@ public class BasePage {
 
     private static final int ANDROID_SCROLL_DIVISOR = 3;
 
-    public BasePage(AppiumDriver mDriver) {
+    public BasePage(WebDriver mDriver) {
+        super(mDriver);
         this.mDriver = mDriver;
-        PageFactory.initElements(new AppiumFieldDecorator(mDriver, Duration.ofSeconds(15)), this);
+        PageFactory.initElements(new AppiumFieldDecorator(getDriver(), Duration.ofSeconds(15)), this);
     }
 
-    public AppiumDriver getmDriver(){
+    public WebDriver getmDriver(){
         return this.mDriver;
     }
 
@@ -68,7 +71,7 @@ public class BasePage {
     }
 
     protected void swipe(Point start, Point end, Duration duration) {
-        AppiumDriver d = getmDriver();
+        AppiumDriver d = (AppiumDriver) getmDriver();
         boolean isAndroid = d instanceof AndroidDriver;
 
         PointerInput input = new PointerInput(PointerInput.Kind.TOUCH, "finger1");
@@ -133,7 +136,7 @@ public class BasePage {
     }
 
     protected void tapAtPoint(Point point) {
-        AppiumDriver d = getmDriver();  // assuming here a getDriver method
+        AppiumDriver d = (AppiumDriver) getmDriver();  // assuming here a getDriver method
         PointerInput input = new PointerInput(PointerInput.Kind.TOUCH, "finger1");
         Sequence tap = new Sequence(input, 0);
         tap.addAction(input.createPointerMove(Duration.ZERO, PointerInput.Origin.viewport(), point.x, point.y));
